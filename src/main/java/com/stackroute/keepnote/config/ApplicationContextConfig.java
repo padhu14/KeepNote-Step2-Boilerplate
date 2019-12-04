@@ -47,13 +47,22 @@ public class ApplicationContextConfig {
 	@Bean
 	@Autowired
 	public DataSource getDataSource() {
-		BasicDataSource basicDataSource = new BasicDataSource();
-		basicDataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-		basicDataSource.setUrl(
-				"jdbc:mysql://localhost:3306/testdb" + "?verifyServerCertificate=false&useSSL=false&requireSSL=false");
-		basicDataSource.setUsername("root");
-		basicDataSource.setPassword("root");
-		return basicDataSource;
+		BasicDataSource dataSource = new BasicDataSource();
+		// dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+		// dataSource.setUrl(
+		// "jdbc:mysql://localhost:3306/testdb" +
+		// "?verifyServerCertificate=false&useSSL=false&requireSSL=false");
+		// dataSource.setUsername("root");
+		// dataSource.setPassword("root");
+
+		dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+		dataSource.setUrl("jdbc:mysql://" + System.getenv("MYSQL_HOST") + ":3306/" + System.getenv("MYSQL_DATABASE")
+				+ "?verifyServerCertificate=false&useSSL=false&requireSSL=false");
+		dataSource.setUsername(System.getenv("MYSQL_USER"));
+		dataSource.setPassword(System.getenv("MYSQL_PASSWORD"));
+
+		return dataSource;
+
 	}
 
 	/*
@@ -74,6 +83,7 @@ public class ApplicationContextConfig {
 		factoryBean.afterPropertiesSet();
 		return factoryBean;
 	}
+
 	/*
 	 * Define the bean for Transaction Manager. HibernateTransactionManager handles
 	 * transaction in Spring. The application that uses single hibernate session
@@ -86,7 +96,7 @@ public class ApplicationContextConfig {
 	@Autowired
 	public HibernateTransactionManager getTransactioManager(SessionFactory sessionFactory) {
 		HibernateTransactionManager transaction = new HibernateTransactionManager();
-   		transaction.setSessionFactory(sessionFactory);
-   		return transaction;
+		transaction.setSessionFactory(sessionFactory);
+		return transaction;
 	}
 }
